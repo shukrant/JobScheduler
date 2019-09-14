@@ -6,12 +6,59 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Comparator;
 
 public class Implementation implements JobSchedulerService {
 
     @Override
     public void firstComeFirstServe(int threadCount, List<Job> job) {
+        System.out.println("FCFS-");
         Map<Integer, List<String>> threads = assignJobsToThreads(threadCount, job);
+
+        displayScheduledJobs(threads);
+    }
+
+    @Override
+    public void fixedPriorityScheduling(int threadCount, List<Job> job) {
+        System.out.println("FPS:");
+
+        List<Job> jobs = (List<Job>) ((ArrayList) job).clone();
+        jobs.sort(new Comparator<Job>() {
+            @Override
+            public int compare(Job j1, Job j2) {
+                if (j1.getPriority() == j2.getPriority()) {
+                    if (j1.getUserType() == j2.getUserType()) {
+                        return (int) (j2.getDuration() - j1.getDuration());
+                    } else {
+                        return j1.getUserType() - j2.getUserType();
+                    }
+                }
+                return (int) (j1.getPriority() - j2.getPriority());
+            }
+        });
+
+        Map<Integer, List<String>> threads = assignJobsToThreads(threadCount, jobs);
+
+        displayScheduledJobs(threads);
+    }
+
+    @Override
+    public void shortestJobFirst(int threadCount, List<Job> job) {
+        System.out.println("SJFS:");
+
+        List<Job> jobs = (List<Job>) ((ArrayList) job).clone();
+        jobs.sort(new Comparator<Job>() {
+            @Override
+            public int compare(Job j1, Job j2) {
+                if (j1.getDuration() == j2.getDuration()) {
+                    return j1.getPriority() - j2.getPriority();
+                } else  {
+                    return (int) (j1.getDuration() - j2.getDuration());
+                }
+            }
+        });
+
+        Map<Integer, List<String>> threads = assignJobsToThreads(threadCount, jobs);
 
         displayScheduledJobs(threads);
     }

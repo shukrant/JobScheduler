@@ -23,5 +23,7 @@ public class Main {
         jobs.add(job5);
 
         jobScheduler.firstComeFirstServe(2, jobs);
+        jobScheduler.fixedPriorityScheduling(2, jobs);
+        jobScheduler.shortestJobFirst(2, jobs);
     }
 }
